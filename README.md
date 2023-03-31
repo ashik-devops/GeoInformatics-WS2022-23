@@ -1,7 +1,7 @@
 # Scrape time varying environmental data from a web site to generate time series of env. variables.
 
 ## Group Members
-- Ashik Mahmud 27672 @ashik-devops
+- Ashik Mahmud 27672 @ashik-devops [I'm an inline-style link](https://www.google.com)
 - Ruhi Tamanna Alam 28370
 
 ## Introduction

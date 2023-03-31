@@ -1,8 +1,8 @@
 # Scrape time varying environmental data from a web site to generate time series of env. variables.
 
 ## Group Members
-- Ashik Mahmud 27672 @ashik-devops [I'm an inline-style link](https://www.google.com)
-- Ruhi Tamanna Alam 28370
+- Ashik Mahmud 27672  [@ashik-devops](https://github.com/ashik-devops)
+- Ruhi Tamanna Alam 28370 [@Ruhitamanna](https://github.com/ruhiTamanna)
 
 ## Introduction
 
@@ -20,7 +20,7 @@ In conclusion, this assignment demonstrates a thorough method for gathering and 
  - QGIS
  - Anaconda
  - Postgresql and Postgis
- - Necessary packages after configuring the environment like sqlalchemy psycopg2 pgspecial ipython-sql jupyterlab geopandas etc.
+ - Necessary packages like sqlalchemy psycopg2 pgspecial ipython-sql jupyterlab geopandas etc. after configuring conda the environment and setting conda forge to strict 
 
 ## Objective
 

@@ -34,26 +34,82 @@ The main objectives of this assignment are:
 
 ### Georeference Gauge Location Maps:
 
-To georeference five gauge locations, a set of location maps was downloaded from a provided URL and cropped to fit the image. The following process was then undertaken:
+For georeferencing five gauge locations, a set of location maps were downloaded from a provided URL and cropped to fit the image. The following process was then undertaken:
 
-- Selected Georeferencer option from the Layers tab in QGIS
-- Opened the map using the "Open Raster" option and typed in the longitude and latitude values to direct to the actual position on the desired destination on the map
-- Chose a suitable Ground Control Point (GCP) in the raster image through the "Add Point" option
-- Selected "From Map Canvas" option from the pop-up window and searched for the chosen point in the actual map
-- Clicked on the "Ok" button to add the GCP point entry for the raster image and the map
-- Repeated the process 20-25 times to improve accuracy
-- Used the "Start Georeferencing" button to begin the georeferencing process
-- Set the type of transformation to "Thin Plain Spline" and the Target CRS to "EPSG:25832 - ETRS89 / UTM zone 32N"
-- Created a layer on top of the actual map inside the QGIS main window with the rastered map on top of the Openmap, and used the points to georeference these two maps
-- The resulting georeferenced maps can be opened in QGIS by opening the file as a project.
-
+- Selected Georeferencer option from the Layers tab (For Mac)
+- Opened the map using the "Open Raster" option
+- Chose a suitable Ground Control Point (GCP) in the raster image through the "Add Point"(Yellow Button)
+- Selected "From Map Canvas" option from the new pop-up window and chosen a reference point on openstreet map
+- Clicked on the "Ok" button to add the GCP point entry for the raster image,gcp table and the map
+- The process should be repeated till the image is well georeferenced. Then, some trnasformation setting "Thin Plain Spline" and the Target CRS to "EPSG:25832 - ETRS89 / UTM zone 32N" should be done from transformation/settings menu
+- Upon pressing the play button in green, the georeferencer creates a layer with the rastered map on top of the openstreet map
 ### PostgreSQL / PostGIS:
 
 The project employs a PostgreSQL database to store the extracted master data and periodic data. The database contains two main tables - "Masterdata" and "Waterlevel" - which store the respective data sets. The database also features geospatial extensions, such as PostGIS, to facilitate geospatial data processing.
+                         brew install postgis (for windows Chocolatey)
+The inside the database these extensions should be created to enable postgis
+                         -- Enable PostGIS (as of 3.0 contains just geometry/geography)
+                         CREATE EXTENSION postgis;
+                         -- enable raster support (for 3+)
+                         CREATE EXTENSION postgis_raster;
+                         -- Enable Topology
+                         CREATE EXTENSION postgis_topology;
+                         -- Enable PostGIS Advanced 3D
+                         -- and other geoprocessing algorithms
+                         -- sfcgal not available with all distributions
+                         CREATE EXTENSION postgis_sfcgal;
+                         -- fuzzy matching needed for Tiger
+                         CREATE EXTENSION fuzzystrmatch;
+                         -- rule based standardizer
+                         CREATE EXTENSION address_standardizer;
+                         -- example rule data set
+                         CREATE EXTENSION address_standardizer_data_us;
+                         -- Enable US Tiger Geocoder
+                         CREATE EXTENSION postgis_tiger_geocoder;
+
+
+
+The finalScript.sql file is used for running neccessary sql commands to created role, database and necessary table. This file can be separated into multiple files to execute with psql or can be used by commenting out all other segments except one.
 
 ### Periodic Data Scrapper:
 
-The periodic data scrapper is another Python script that extracts water level and discharge data at regular intervals. It uses BeautifulSoup for web scraping and stores the extracted data in a PostgreSQL table named "Waterlevel". This script is set up as a cron job to ensure regular updates and maintain the current status of the database.
+The periodic data scrapper is a Python script that extracts water level and discharge data at regular intervals. It uses BeautifulSoup for web scraping and stores the extracted data in a PostgreSQL table named "Waterlevel". This script is set up as a cron job to ensure regular updates and maintain the current status of the database using this shell script
+
+# Get HTML content and parse with BeautifulSoup
+base_url = 'https://howis.eglv.de/pegel/html/uebersicht_internet.php'
+res = requests.get(base_url)
+soup = BeautifulSoup(res.content, 'html.parser')
+
+# Extract water level data from HTML and create station_data list
+tooltips = soup.select('div.tooltip')
+tooltip_data = []
+headers = ['sid', 'pegelnummer','place', 'timestamp', 'water_level', 'discharge']
+for i, div in enumerate(tooltips):
+    header = re.sub(r'\s+', ' ', div.select_one('.tooltip-head').text).strip()
+    values = div.select('td.tooltip-value')
+    station_data = [f's{i+1}', header, datetime.now().strftime('%Y-%m-%d %H:%M:%S')] + [value.text.replace('\xa0', '').strip() for value in values]
+    tooltip_data.append(station_data)
+
+# Write station_data to CSV file
+output = '/Users/ashikmahmud/MyDocuments/Personal/GEO2023EX/Final/output.csv'
+if_file_exists = os.path.isfile(output)
+for item in tooltip_data:
+    address_parts = item[1].split(' ')
+    item[1:2] = [address_parts[0], ' '.join(address_parts[1:])]
+with open(output, 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(headers)
+    writer.writerows(tooltip_data)
+
+# Read CSV file and write to PostgreSQL database
+engine_connect = sqlalchemy.create_engine("postgresql://env_master:M123xyz@localhost:5433/env_groundwater").connect()
+df = pd.read_csv(output)
+with engine_connect as connect:
+    df.to_sql('Waterlevel', con=connect, if_exists='append', index=False)
+
+# Remove CSV file
+os.remove(output)
+
 
 ### Master Data Scraper:
 

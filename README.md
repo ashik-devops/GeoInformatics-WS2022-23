@@ -1,4 +1,8 @@
-# Title: Scraping Environmental Data and Visualizing in QGIS
+# Scrape time varying environmental data from a web site to generate time series of env. variables.
+
+## Group Members
+- Ashik Mahmud 27672 @ashik-devops
+- Ruhi Tamanna Alam 28370
 
 ## Introduction
 

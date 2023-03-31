@@ -34,8 +34,18 @@ The main objectives of this assignment are:
 
 ### Georeference Gauge Location Maps:
 
-We will georeference the gauge location maps provided by the website.
-Example image: https://howis.eglv.de/pegel/images/stationpics/maps/20012_stadtplan.gif
+To georeference five gauge locations, a set of location maps was downloaded from a provided URL and cropped to fit the image. The following process was then undertaken:
+
+- Selected Georeferencer option from the Layers tab in QGIS
+- Opened the map using the "Open Raster" option and typed in the longitude and latitude values to direct to the actual position on the desired destination on the map
+- Chose a suitable Ground Control Point (GCP) in the raster image through the "Add Point" option
+- Selected "From Map Canvas" option from the pop-up window and searched for the chosen point in the actual map
+- Clicked on the "Ok" button to add the GCP point entry for the raster image and the map
+- Repeated the process 20-25 times to improve accuracy
+- Used the "Start Georeferencing" button to begin the georeferencing process
+- Set the type of transformation to "Thin Plain Spline" and the Target CRS to "EPSG:25832 - ETRS89 / UTM zone 32N"
+- Created a layer on top of the actual map inside the QGIS main window with the rastered map on top of the Openmap, and used the points to georeference these two maps
+- The resulting georeferenced maps can be opened in QGIS by opening the file as a project.
 
 ### PostgreSQL / PostGIS:
 

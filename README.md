@@ -45,27 +45,27 @@ For georeferencing five gauge locations, a set of location maps were downloaded 
 - Upon pressing the play button in green, the georeferencer creates a layer with the rastered map on top of the openstreet map
 ### PostgreSQL / PostGIS:
 
-The project employs a PostgreSQL database to store the extracted master data and periodic data. The database contains two main tables - "Masterdata" and "Waterlevel" - which store the respective data sets. The database also features geospatial extensions, such as PostGIS, to facilitate geospatial data processing.
-                         brew install postgis (for windows Chocolatey)
-The inside the database these extensions should be created to enable postgis
-                         -- Enable PostGIS (as of 3.0 contains just geometry/geography)
-                         CREATE EXTENSION postgis;
-                         -- enable raster support (for 3+)
-                         CREATE EXTENSION postgis_raster;
-                         -- Enable Topology
-                         CREATE EXTENSION postgis_topology;
-                         -- Enable PostGIS Advanced 3D
-                         -- and other geoprocessing algorithms
-                         -- sfcgal not available with all distributions
-                         CREATE EXTENSION postgis_sfcgal;
-                         -- fuzzy matching needed for Tiger
-                         CREATE EXTENSION fuzzystrmatch;
-                         -- rule based standardizer
-                         CREATE EXTENSION address_standardizer;
-                         -- example rule data set
-                         CREATE EXTENSION address_standardizer_data_us;
-                         -- Enable US Tiger Geocoder
-                         CREATE EXTENSION postgis_tiger_geocoder;
+The project employs a PostgreSQL database to store the extracted master data and periodic data. The database contains two main tables - "Masterdata" and "Waterlevel" - which store the respective data sets. The database also features geospatial extensions, such as PostGIS, to facilitate geospatial data processing.Then inside the database, these extensions should be created to enable postgis
+
+                           brew install postgis (for windows Chocolatey)
+                           -- Enable PostGIS (as of 3.0 contains just geometry/geography)
+                           CREATE EXTENSION postgis;
+                           -- enable raster support (for 3+)
+                           CREATE EXTENSION postgis_raster;
+                           -- Enable Topology
+                           CREATE EXTENSION postgis_topology;
+                           -- Enable PostGIS Advanced 3D
+                           -- and other geoprocessing algorithms
+                           -- sfcgal not available with all distributions
+                           CREATE EXTENSION postgis_sfcgal;
+                           -- fuzzy matching needed for Tiger
+                           CREATE EXTENSION fuzzystrmatch;
+                           -- rule based standardizer
+                           CREATE EXTENSION address_standardizer;
+                           -- example rule data set
+                           CREATE EXTENSION address_standardizer_data_us;
+                           -- Enable US Tiger Geocoder
+                           CREATE EXTENSION postgis_tiger_geocoder;
 
 
 

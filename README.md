@@ -55,6 +55,35 @@ https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal=2
 
 - Import packages: The script begins by importing necessary libraries and packages, such as requests, BeautifulSoup, geopandas, pandas, psycopg2, and sqlalchemy
 - Create a connection to the database: It creates an engine using sqlalchemy.create_engine and connects to the PostgreSQL database named env_groundwater
+- Scrape data from the website
+all_stm_url = r"https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal="
+base_url="https://howis.eglv.de/pegel"
+
+consolidated_array=[]
+def download_image(url, file_path):
+    # function to download image and save it to a local file
+    ...
+
+for i in range(1, 100):
+    url = all_stm_url + str(i)
+    res = requests.get(url)
+    soup = BeautifulSoup(res.content, 'html.parser')
+    stammDaten = soup.select_one('#popupcontenttitle').text.strip().split(':')[1].strip()
+    div_tag = soup.find('div', {'id': 'mapcontainer'})
+    local_file_path = None
+    if div_tag:
+        img_tag = div_tag.find('img', {'border': '0'})
+        if img_tag:
+            # download the image
+            ...
+        else:
+            print("Image tag not found.")
+    else:
+        print("Div tag not found.")
+    # extract the data from the HTML
+    ...
+    consolidated_array.append(pairs)
+
 - Create a function to create key-value pairs: A function named create_key_value_pairs is defined to parse the labels and values from the scraped HTML and create a dictionary of key-value pairs
                   def create_key_value_pairs(labels_values):
                       result = {}
@@ -68,6 +97,21 @@ https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal=2
                               result[current_label] = item
 
                       return result
+ - Filtering and transforming the Data
+                   data_filtered = [d for d in consolidated_array if not all(v == "-" for v in d.values())]
+
+                   for d in data_filtered:
+                       for k, v in d.items():
+                           if v == '' or v == '-':
+                               d[k] = None
+                               
+ - Create a GeoDataFrame from the cleaned data and save it to a GeoPackage file
+ - Save the data to a PostgreSQL database
+ 
+ The script outputs the following:
+
+ A GeoPackage file named "GW_Stations.gpkg", containing the GeoDataFrame with the station data
+ A PostgreSQL database named "env_groundwater" with a table named "Masterdata" containing the station data
 
 
 ### Image Data

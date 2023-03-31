@@ -105,7 +105,13 @@ base_url="https://howis.eglv.de/pegel"
                                d[k] = None
                                
  - Create a GeoDataFrame from the cleaned data and save it to a GeoPackage file
+                         df = pd.DataFrame(data_filtered)
+                         df_cleaned = df[df['Rechtswert'].notnull()]
+                         gdf = gpd.GeoDataFrame(df_cleaned, geometry=gpd.points_from_xy(df_cleaned.Rechtswert, df_cleaned.Hochwert), crs="EPSG:31466")
+                         gdf.to_file("GW_Stations.gpkg", layer='GW Stations', driver="GPKG")
+
  - Save the data to a PostgreSQL database
+                         gdf.to_postgis(con=engine, name="Masterdata", schema="public", index=True, chunksize=100, if_exists="replace")
  
  The script outputs the following:
 

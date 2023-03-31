@@ -42,4 +42,11 @@ The periodic data scrapper is another Python script that extracts water level an
 The master data scrapper is a Python script that utilizes the BeautifulSoup library to extract master data of gauges, including station identifiers, coordinates, and other essential parameters. This data is collected once and stored in a PostgreSQL table named "Masterdata".
 
 Example URLs:
-https://howis
+https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal=32
+https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal=28
+
+### Image Data 
+For the image in master data website, we can store it as a BLOB in the PostgreSQL database. However, it might be more convenient to store the images on disk and reference their file paths in the database.
+
+
+

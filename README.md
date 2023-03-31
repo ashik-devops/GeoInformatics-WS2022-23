@@ -12,6 +12,12 @@ The assignment also involves georeferencing five gauge location pictures on the 
 
 In conclusion, this assignment demonstrates a thorough method for gathering and managing environmental data, offering helpful insights for managing and making decisions about water resources. The data collected can be used to develop predictive models, inform policy decisions, and contribute to a better understanding of water resource systems.
 
+## Installations
+ - QGIS
+ - Anaconda
+ - Postgresql and Postgis
+ - Necessary packages after configuring the environment like sqlalchemy psycopg2 pgspecial ipython-sql jupyterlab geopandas etc.
+
 ## Objective
 
 The main objectives of this assignment are:
@@ -47,7 +53,24 @@ Example URLs:
 https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal=32
 https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal=28
 
-### Image Data 
+- Import packages: The script begins by importing necessary libraries and packages, such as requests, BeautifulSoup, geopandas, pandas, psycopg2, and sqlalchemy
+- Create a connection to the database: It creates an engine using sqlalchemy.create_engine and connects to the PostgreSQL database named env_groundwater
+- Create a function to create key-value pairs: A function named create_key_value_pairs is defined to parse the labels and values from the scraped HTML and create a dictionary of key-value pairs
+                  def create_key_value_pairs(labels_values):
+                      result = {}
+                      current_label = None
+
+                      for item in labels_values:
+                          if ":" in item:
+                              current_label = item.replace(":", "")
+                              result[current_label] = None
+                          elif current_label is not None:
+                              result[current_label] = item
+
+                      return result
+
+
+### Image Data
 
 For the image in master data website, we can store it as a BLOB in the PostgreSQL database. However, it might be more convenient to store the images on disk and reference their file paths in the database. Thats what has exactly been done, the absolute filepath is saved in the database and the image is saved in the relative directory images.
 

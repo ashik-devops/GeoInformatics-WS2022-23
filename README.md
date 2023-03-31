@@ -73,7 +73,13 @@ The finalScript.sql file is used for running neccessary sql commands to created 
 
 ### Periodic Data Scrapper:
 
-The periodic data scrapper is a Python script that extracts water level and discharge data at regular intervals. It uses BeautifulSoup for web scraping and stores the extracted data in a PostgreSQL table named "Waterlevel". This script is set up as a cron job to ensure regular updates and maintain the current status of the database using this shell script
+The periodic data scrapper is a Python script that extracts water level and discharge data at regular intervals. It uses BeautifulSoup for web scraping and stores the extracted data in a PostgreSQL table named "Waterlevel". This script is set up as a cron job along with insertData script to ensure regular updates and maintain the current status of the database using this shell script
+
+                                          cd /Users/name/yourpath
+                                          while true; do
+                                           python periodicScrapper.py && python insertData.py
+                                           sleep 1000
+                                          done 
 
 - Get HTML content and parse with BeautifulSoup
 
@@ -189,9 +195,25 @@ base_url="https://howis.eglv.de/pegel"
 
 ### Image Data
 
-For the image in master data website, we can store it as a BLOB in the PostgreSQL database. However, it might be more convenient to store the images on disk and reference their file paths in the database. Thats what has exactly been done, the absolute filepath is saved in the database and the image is saved in the relative directory images.
+For the images in master data website, we can store it as a BLOB in the PostgreSQL database. However, it might be more convenient to store the images on disk and reference their file paths in the database. Thats what has exactly been done, the absolute filepath is saved in the database and the images are saved in the created relative directory images.
+
+                            def download_image(url, file_path):
+                                response = requests.get(url, stream=True)
+                                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+                                with open(file_path, 'wb') as f:
+                                    for chunk in response.iter_content(chunk_size=8192):
+                                        f.write(chunk)
 
 ### QGIS Temporal Controller 
 
 QGIS, an open-source GIS software, is used to visualize the data in a geospatial context. The temporal controller feature in QGIS allows generating time-lapse visualizations of the data, which can help identify patterns and trends in the water resource system.
+
+- Create two separate layers, one for the water level table without geometry and the other for the master data with geometry.
+- Open the toolbox and select "join by value."
+- Input the intended field to join and selected the join type as "one to many," then run the process.
+- The merged data should be visible in a joined layer attribute table.
+- Enabled the temporal controller with timestamp from the layer properties.
+ -Used the symbology as graduated with appropriate classification and equal interval.
+- Selected the clock icon from the toolbar to pop up the temporal controller, then play the animation. This should display the water level changes over time.
 

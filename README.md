@@ -47,6 +47,12 @@ For georeferencing five gauge locations, a set of location maps were downloaded 
 - Clicked on the "Ok" button to add the GCP point entry for the raster image,gcp table and the map
 - The process should be repeated till the image is well georeferenced. Then, some trnasformation setting "Thin Plain Spline" and the Target CRS to "EPSG:25832 - ETRS89 / UTM zone 32N" should be done from transformation/settings menu
 - Upon pressing the play button in green, the georeferencer creates a layer with the rastered map on top of the openstreet map
+
+Examples:
+
+<img width="629" alt="Screenshot 2023-03-31 at 23 42 16" src="https://user-images.githubusercontent.com/45098936/229238544-981cb743-4c47-4ba5-bb7d-3c45b8a2b8ad.png">
+
+
 ### PostgreSQL / PostGIS:
 
 The project employs a PostgreSQL database to store the extracted master data and periodic data. The database contains two main tables - "Masterdata" and "Waterlevel" - which store the respective data sets. The database also features geospatial extensions, such as PostGIS, to facilitate geospatial data processing.Then inside the database, these extensions should be created to enable postgis

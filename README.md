@@ -22,6 +22,8 @@ The main objectives of this assignment are:
 - Scrape master data of gauges from the website and store it in a PostgreSQL table.
 - Visualize the data using QGIS and create a dynamic map with the temporal controller.
 
+
+
 ## Methodology
 
 ### Georeference Gauge Location Maps:
@@ -46,7 +48,10 @@ https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal=3
 https://howis.eglv.de/pegel/html/stammdaten_html/MO_StammdatenPegel.php?PIDVal=28
 
 ### Image Data 
-For the image in master data website, we can store it as a BLOB in the PostgreSQL database. However, it might be more convenient to store the images on disk and reference their file paths in the database.
 
+For the image in master data website, we can store it as a BLOB in the PostgreSQL database. However, it might be more convenient to store the images on disk and reference their file paths in the database. Thats what has exactly been done, the absolute filepath is saved in the database and the image is saved in the relative directory images.
 
+### QGIS Temporal Controller 
+
+QGIS, an open-source GIS software, is used to visualize the data in a geospatial context. The temporal controller feature in QGIS allows generating time-lapse visualizations of the data, which can help identify patterns and trends in the water resource system.
 

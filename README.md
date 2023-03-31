@@ -75,40 +75,42 @@ The finalScript.sql file is used for running neccessary sql commands to created 
 
 The periodic data scrapper is a Python script that extracts water level and discharge data at regular intervals. It uses BeautifulSoup for web scraping and stores the extracted data in a PostgreSQL table named "Waterlevel". This script is set up as a cron job to ensure regular updates and maintain the current status of the database using this shell script
 
-# Get HTML content and parse with BeautifulSoup
-base_url = 'https://howis.eglv.de/pegel/html/uebersicht_internet.php'
-res = requests.get(base_url)
-soup = BeautifulSoup(res.content, 'html.parser')
+- Get HTML content and parse with BeautifulSoup
 
-# Extract water level data from HTML and create station_data list
-tooltips = soup.select('div.tooltip')
-tooltip_data = []
-headers = ['sid', 'pegelnummer','place', 'timestamp', 'water_level', 'discharge']
-for i, div in enumerate(tooltips):
-    header = re.sub(r'\s+', ' ', div.select_one('.tooltip-head').text).strip()
-    values = div.select('td.tooltip-value')
-    station_data = [f's{i+1}', header, datetime.now().strftime('%Y-%m-%d %H:%M:%S')] + [value.text.replace('\xa0', '').strip() for value in values]
-    tooltip_data.append(station_data)
+                            base_url = 'https://howis.eglv.de/pegel/html/uebersicht_internet.php'
+                            res = requests.get(base_url)
+                            soup = BeautifulSoup(res.content, 'html.parser')
 
-# Write station_data to CSV file
-output = '/Users/ashikmahmud/MyDocuments/Personal/GEO2023EX/Final/output.csv'
-if_file_exists = os.path.isfile(output)
-for item in tooltip_data:
-    address_parts = item[1].split(' ')
-    item[1:2] = [address_parts[0], ' '.join(address_parts[1:])]
-with open(output, 'w', newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(headers)
-    writer.writerows(tooltip_data)
+- Extract water level data from HTML and create station_data list
 
-# Read CSV file and write to PostgreSQL database
-engine_connect = sqlalchemy.create_engine("postgresql://env_master:M123xyz@localhost:5433/env_groundwater").connect()
-df = pd.read_csv(output)
-with engine_connect as connect:
-    df.to_sql('Waterlevel', con=connect, if_exists='append', index=False)
+                          tooltips = soup.select('div.tooltip')
+                          tooltip_data = []
+                          headers = ['sid', 'pegelnummer','place', 'timestamp', 'water_level', 'discharge']
+                          for i, div in enumerate(tooltips):
+                          header = re.sub(r'\s+', ' ', div.select_one('.tooltip-head').text).strip()
+                          values = div.select('td.tooltip-value')
+                          station_data = [f's{i+1}', header, datetime.now().strftime('%Y-%m-%d %H:%M:%S')] + [value.text.replace('\xa0', '').strip()                                 for value in values]
+                          tooltip_data.append(station_data)
 
-# Remove CSV file
-os.remove(output)
+- Write station_data to CSV file
+                          output = '/Users/ashikmahmud/MyDocuments/Personal/GEO2023EX/Final/output.csv'
+                          if_file_exists = os.path.isfile(output)
+                          for item in tooltip_data:
+                              address_parts = item[1].split(' ')
+                              item[1:2] = [address_parts[0], ' '.join(address_parts[1:])]
+                          with open(output, 'w', newline='') as csvfile:
+                              writer = csv.writer(csvfile)
+                              writer.writerow(headers)
+                              writer.writerows(tooltip_data)
+
+- Read CSV file and write to PostgreSQL database
+                          engine_connect = sqlalchemy.create_engine("postgresql://env_master:M123xyz@localhost:5433/env_groundwater").connect()
+                          df = pd.read_csv(output)
+                          with engine_connect as connect:
+                              df.to_sql('Waterlevel', con=connect, if_exists='append', index=False)
+
+- Remove CSV file
+                          os.remove(output)
 
 
 ### Master Data Scraper:
